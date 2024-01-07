@@ -17,6 +17,10 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
+  validateHash(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     createUserDto.password = await this.hashPassword(createUserDto?.password);
     const user = this.userRepository.create(createUserDto);

@@ -1,7 +1,7 @@
 import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
+import { LocalGuard } from './local-auth.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller()
@@ -15,18 +15,19 @@ export class AuthController {
    * Стратегия local автоматически достанет username и password из тела запроса
    * Если пароль будет верным, данные пользователя окажутся в объекте req.user
    */
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalGuard)
   @Post('signin')
   signin(@Req() req) {
     /* Генерируем для пользователя JWT-токен */
 
-    return this.authService.auth(req.body);
+    return this.authService.auth(req.user);
   }
 
   @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto) {
     /* При регистрации создаём пользователя и генерируем для него токен */
     const user = await this.usersService.create(createUserDto);
+
     return this.authService.auth(user);
   }
 }

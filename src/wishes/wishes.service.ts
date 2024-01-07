@@ -22,6 +22,7 @@ export class WishesService {
   async create(createWishDto: CreateWishDto, owner: User) {
     const wish = { ...createWishDto, owner };
     await this.wishRepository.save(wish);
+    return { ok: true, status: 'success' };
   }
 
   async findAll(): Promise<Wish[]> {

@@ -13,7 +13,9 @@ export class AuthService {
   auth(user: User) {
     const payload = { sub: user.id };
 
-    return { access_token: this.jwtService.sign(payload) };
+    return {
+      access_token: this.jwtService.sign(payload, { secret: 'jwt_secret' }),
+    };
   }
 
   async validatePassword(username: string, password: string) {
@@ -21,7 +23,9 @@ export class AuthService {
 
     /* В идеальном случае пароль обязательно должен быть захэширован */
 
-    if (user && user.password === password) {
+    const equal = this.usersService.validateHash(password, user.password);
+
+    if (user && equal) {
       /* Исключаем пароль из результата */
       const { password, ...result } = user;
 
